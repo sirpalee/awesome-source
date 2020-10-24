@@ -1,9 +1,7 @@
-## Awesome Rust Libraries
+## Graphics Libraries
 
-#### Graphics
+- [Ash: Lean and unsafe bindings for vulkan in rust.](https://crates.io/crates/ash)
 
-- https://crates.io/crates/ash -> Lean and unsafe bindings for vulkan in rust.
+## Windowing Libraries
 
-#### Windowing
-
-- https://crates.io/crates/winit -> Lightweight and multi-platform windowing library.
+- [Winit: Lightweight and multi-platform windowing library.](https://crates.io/crates/winit)
