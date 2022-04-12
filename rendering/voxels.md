@@ -12,3 +12,4 @@
 - [Interactively Modifying Compressed Sparse Voxel Representations](https://graphics.tudelft.nl/Publications-new/2020/CBE20/ModifyingCompressedVoxels-main.pdf)
 - [An Accurate Method for Voxelizing Polygon Meshes](http://web.eecs.utk.edu/~huangj/papers/polygon.pdf)
 - [Robust Inside-Outside Segmentation using Generalized Winding Numbers](https://igl.ethz.ch/projects/winding-number/robust-inside-outside-segmentation-using-generalized-winding-numbers-siggraph-2013-jacobson-et-al.pdf)
+- [An Efficient Parametric Algorithm for Octree Traversal](http://wscg.zcu.cz/wscg2000/Papers_2000/X31.pdf)
