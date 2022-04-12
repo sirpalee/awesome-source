@@ -7,3 +7,8 @@
     - [Paper](https://graphics.tudelft.nl/Publications-new/2020/VSE20/LossyGeometryCompressionForHighResolutionVoxelScenes.pdf)
 - [Symmetry-aware Sparse Voxel DAGs (SSVDAGs) for compression-domain tracing of high-resolution geometric scenes](https://jcgt.org/published/0006/02/01/)
 - [PSVDAG: Compact Voxelized Representation of 3D Scenes Using Pointerless Sparse Voxel Directed Acyclic Graphs ](http://www.cai.sk/ojs/index.php/cai/article/view/2020_3_587)
+- [High Resolution Sparse Voxel DAGs
+](http://www.cse.chalmers.se/~uffe/HighResolutionSparseVoxelDAGs.pdf)
+- [Interactively Modifying Compressed Sparse Voxel Representations](https://graphics.tudelft.nl/Publications-new/2020/CBE20/ModifyingCompressedVoxels-main.pdf)
+- [An Accurate Method for Voxelizing Polygon Meshes](http://web.eecs.utk.edu/~huangj/papers/polygon.pdf)
+- [Robust Inside-Outside Segmentation using Generalized Winding Numbers](https://igl.ethz.ch/projects/winding-number/robust-inside-outside-segmentation-using-generalized-winding-numbers-siggraph-2013-jacobson-et-al.pdf)
