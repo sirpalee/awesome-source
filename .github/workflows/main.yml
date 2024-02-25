@@ -1,6 +1,6 @@
 name: Zola on GitHub Pages
 
-on: 
+on:
  push:
   branches:
    - main
@@ -15,5 +15,6 @@ jobs:
     - name: Build and deploy
       uses: shalzz/zola-deploy-action@v0.18.0
       env:
+        BUILD_DIR: deploy
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PAGES_BRANCH: deploy
