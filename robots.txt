@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sirpalee.dev/awesome-source/sitemap.xml
