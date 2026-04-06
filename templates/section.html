@@ -3,7 +3,7 @@
 {% block seo %}
   {{ super() }}
   {% set title_addition = "" %}
-
+  
   {% if section.title and config.title %}
     {% set title = section.title %}
     {% set title_addition = title_separator ~ config.title %}
@@ -12,13 +12,13 @@
   {% else %}
     {% set title = config.title %}
   {% endif %}
-
+  
   {% if section.description %}
     {% set description = section.description %}
   {% else %}
     {% set description = config.description %}
   {% endif %}
-
+  
   {{ macros_head::seo(title=title, title_addition=title_addition, description=description) }}
 {% endblock seo %}
 
@@ -41,43 +41,35 @@
           </div>
           {{ section.content | safe }}
 
-          {% set subsection_count = section.subsections | length %}
-          {% set page_count = section.pages | length %}
-
-          {% if subsection_count == 0 and page_count == 1 %}
-            {% set only_page = section.pages | first %}
-            <section class="card my-4">
-              <div class="card-body">
-                <h2 class="h4">{{ only_page.title }}</h2>
-                {% if only_page.extra.lead %}<p class="lead">{{ only_page.extra.lead }}</p>{% endif %}
-                {{ only_page.content | safe }}
-              </div>
-            </section>
-          {% elif subsection_count > 0 or page_count > 0 %}
-            <div class="card-list my-4">
-              {% for subsection_path in section.subsections %}
-                {% set subsection = get_section(path=subsection_path) %}
-                <div class="card my-3">
+          {% if section.subsections or section.pages %}
+          <div class="row row-cols-1 row-cols-md-2 g-4 mt-2">
+            {% for subsection_path in section.subsections %}
+              {% set subsection = get_section(path=subsection_path) %}
+              <div class="col">
+                <div class="card h-100">
                   <div class="card-body">
-                    <a class="stretched-link" href="{{ subsection.permalink }}">{{ subsection.title }} &rarr;</a>
+                    <h2 class="h4 mb-2"><a class="stretched-link text-body text-decoration-none" href="{{ subsection.permalink | safe }}">{{ subsection.title }}</a></h2>
                     {% if subsection.description %}
-                    <p class="mt-2 mb-0 text-muted">{{ subsection.description }}</p>
+                    <p class="mb-0">{{ subsection.description }}</p>
                     {% endif %}
                   </div>
                 </div>
-              {% endfor %}
+              </div>
+            {% endfor %}
 
-              {% for page in section.pages %}
-                <div class="card my-3">
+            {% for page in section.pages %}
+              <div class="col">
+                <div class="card h-100">
                   <div class="card-body">
-                    <a class="stretched-link" href="{{ page.permalink }}">{{ page.title }} &rarr;</a>
+                    <h2 class="h4 mb-2"><a class="stretched-link text-body text-decoration-none" href="{{ page.permalink | safe }}">{{ page.title }}</a></h2>
                     {% if page.description %}
-                    <p class="mt-2 mb-0 text-muted">{{ page.description }}</p>
+                    <p class="mb-0">{{ page.description }}</p>
                     {% endif %}
                   </div>
                 </div>
-              {% endfor %}
-            </div>
+              </div>
+            {% endfor %}
+          </div>
           {% endif %}
         </article>
       </div>
