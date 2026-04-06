@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block seo %}
+  {{ super() }}
+  {% set title_addition = "" %}
+
+  {% if section.title and config.title %}
+    {% set title = section.title %}
+    {% set title_addition = title_separator ~ config.title %}
+  {% elif section.title %}
+    {% set title = section.title %}
+  {% else %}
+    {% set title = config.title %}
+  {% endif %}
+
+  {% if section.description %}
+    {% set description = section.description %}
+  {% else %}
+    {% set description = config.description %}
+  {% endif %}
+
+  {{ macros_head::seo(title=title, title_addition=title_addition, description=description) }}
+{% endblock seo %}
+
+{% block body %}
+  {% if section.extra.class %}
+    {% set page_class = section.extra.class %}
+  {% else %}
+    {% set page_class = "page list" %}
+  {% endif %}
+{% endblock body %}
+
+{% block content %}
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      <div class="col-md-12 col-lg-10 col-xxl-8">
+        <article>
+          <div class="page-header">
+            <h1>{{ section.title }}</h1>
+          </div>
+          {{ section.content | safe }}
+
+          {% set subsection_count = section.subsections | length %}
+          {% set page_count = section.pages | length %}
+
+          {% if subsection_count == 0 and page_count == 1 %}
+            {% set only_page = section.pages | first %}
+            <section class="card my-4">
+              <div class="card-body">
+                <h2 class="h4">{{ only_page.title }}</h2>
+                {% if only_page.extra.lead %}<p class="lead">{{ only_page.extra.lead }}</p>{% endif %}
+                {{ only_page.content | safe }}
+              </div>
+            </section>
+          {% elif subsection_count > 0 or page_count > 0 %}
+            <div class="card-list my-4">
+              {% for subsection_path in section.subsections %}
+                {% set subsection = get_section(path=subsection_path) %}
+                <div class="card my-3">
+                  <div class="card-body">
+                    <a class="stretched-link" href="{{ subsection.permalink }}">{{ subsection.title }} &rarr;</a>
+                    {% if subsection.description %}
+                    <p class="mt-2 mb-0 text-muted">{{ subsection.description }}</p>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+
+              {% for page in section.pages %}
+                <div class="card my-3">
+                  <div class="card-body">
+                    <a class="stretched-link" href="{{ page.permalink }}">{{ page.title }} &rarr;</a>
+                    {% if page.description %}
+                    <p class="mt-2 mb-0 text-muted">{{ page.description }}</p>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </article>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
