@@ -1,5 +1,5 @@
 # The URL the site will be built for
-base_url = "https://sirpalee.dev/awesome-source"
+base_url = "https://awesome-source.wiki"
 title = "Awesome Source"
 description = "Collection of awesome development resources, libraries, guidelines and tutorials."
 
