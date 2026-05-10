@@ -8,29 +8,21 @@
 
 const { useState, useMemo, useRef, useEffect } = React;
 
-const DATA = window.AWESOME_DATA || { categories: [], resources: [] };
+const DATA = window.AWESOME_DATA || { categories: [], tags: [], resources: {} };
 const CATEGORIES = DATA.categories;
-const RESOURCES = DATA.resources;
+const TAGS = DATA.tags;
 
-// Build the tag dictionary from whatever tags actually appear on resources, so
-// new tags added in markdown frontmatter automatically show up in the UI.
-const TAGS = (() => {
-  const set = new Set();
-  for (const r of RESOURCES) for (const t of (r.tags || [])) set.add(t);
-  const order = ['paper', 'video', 'talk', 'repo', 'tool', 'blog', 'book', 'doc', 'course'];
-  const arr = [...set].sort((a, b) => {
-    const ai = order.indexOf(a), bi = order.indexOf(b);
-    if (ai === -1 && bi === -1) return a.localeCompare(b);
-    if (ai === -1) return 1;
-    if (bi === -1) return -1;
-    return ai - bi;
-  });
-  const out = {};
-  for (const t of arr) out[t] = { label: t };
-  return out;
-})();
+// data.js groups resources by category. Flatten to a flat list, injecting cat
+// and a stable synthetic id (cat + index) — authors don't write ids by hand,
+// they're generated here for use as React keys and keyboard-nav references.
+const RESOURCES = Object.entries(DATA.resources || {}).flatMap(([cat, list]) =>
+  list.map((r, i) => ({ ...r, cat, id: `${cat}-${i}` }))
+);
 
 const COUNTS = RESOURCES.reduce((m, r) => (m[r.cat] = (m[r.cat] || 0) + 1, m), {});
+
+// id -> { id, name, blurb } for showing tag descriptions on hover.
+const TAG_BY_ID = TAGS.reduce((m, t) => (m[t.id] = t, m), {});
 
 const THEMES = {
   dark: {
@@ -427,17 +419,18 @@ function CmdBar({ T, searchRef, query, setQuery, view, setView, activeCats, togg
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 6, alignItems: 'center' }}>
           <span style={{ color: T.mute, fontSize: 11, marginRight: 6 }}>--tag</span>
-          {Object.keys(TAGS).map(t => {
-            const active = activeTags.has(t);
+          {TAGS.map(tag => {
+            const active = activeTags.has(tag.id);
             return (
-              <button key={t} onClick={() => toggleTag(t)}
+              <button key={tag.id} onClick={() => toggleTag(tag.id)}
+                title={tag.blurb || tag.name}
                 style={{
                   fontFamily: 'inherit', fontSize: 11.5, padding: '3px 8px', borderRadius: 3,
                   border: `1px solid ${active ? T.accent2 : T.rule}`,
                   background: active ? T.tagBg : 'transparent',
                   color: active ? T.accent2 : T.ink2, cursor: 'pointer',
                 }}>
-                {t}
+                {tag.name}
               </button>
             );
           })}
@@ -570,10 +563,12 @@ function ResRow({ T, r, index, showCat, isSel, onMouseEnter, rowRef }) {
         {(r.tags || []).length > 0 && (
           <div style={{ display: 'flex', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
             {(r.tags || []).map(t => (
-              <span key={t} style={{
-                fontSize: 10.5, color: T.accent2, padding: '1px 6px', borderRadius: 2,
-                background: T.tagBg, border: `1px solid ${T.tagBorder}`,
-              }}>[{t}]</span>
+              <span key={t}
+                title={(TAG_BY_ID[t] && TAG_BY_ID[t].blurb) || t}
+                style={{
+                  fontSize: 10.5, color: T.accent2, padding: '1px 6px', borderRadius: 2,
+                  background: T.tagBg, border: `1px solid ${T.tagBorder}`,
+                }}>[{t}]</span>
             ))}
           </div>
         )}
