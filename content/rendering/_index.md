@@ -1,4 +1,5 @@
 +++
 title = "Rendering"
-description = "Curated resources for rendering"
+description = "Rasterization, real-time, voxels, perf"
+weight = 20
 +++

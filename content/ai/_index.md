@@ -1,4 +1,5 @@
 +++
 title = "AI"
-description = "Curated resources for ai"
+description = "Models, agents, training & inference notes"
+weight = 10
 +++

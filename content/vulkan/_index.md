@@ -1,4 +1,5 @@
 +++
 title = "Vulkan"
-description = "Curated resources for vulkan"
+description = "Specs, samples, and best practices"
+weight = 30
 +++

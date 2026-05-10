@@ -1,4 +1,5 @@
 +++
 title = "Performance"
-description = "Curated resources for performance"
+description = "CPU, memory, profiling, low-level perf"
+weight = 50
 +++

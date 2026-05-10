@@ -1,4 +1,5 @@
 +++
 title = "Datasets"
-description = "Curated resources for datasets"
+description = "Open data sources and benchmarks"
+weight = 80
 +++

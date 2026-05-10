@@ -1,4 +1,5 @@
 +++
 title = "Procedural Generation"
-description = "Curated resources for procedural generation"
+description = "Noise, L-systems, wave function collapse"
+weight = 70
 +++

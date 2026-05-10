@@ -1,6 +1,7 @@
 +++
 title = "Contribution"
 description = "Contribution guidelines"
+weight = 999
 +++
 
 Thank you for wanting to contribute to **Awesome Source**.

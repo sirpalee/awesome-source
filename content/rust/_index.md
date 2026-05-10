@@ -1,4 +1,5 @@
 +++
 title = "Rust"
-description = "Curated resources for rust"
+description = "Systems programming in Rust"
+weight = 40
 +++

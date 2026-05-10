@@ -1,4 +1,5 @@
 +++
 title = "Simulation"
-description = "Curated resources for simulation"
+description = "Physics, fluids, cloth, particles"
+weight = 60
 +++

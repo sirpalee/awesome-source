@@ -1,4 +1,5 @@
 +++
 title = "General"
-description = "Curated resources for general"
+description = "Foundational reads & cross-cutting tools"
+weight = 90
 +++
