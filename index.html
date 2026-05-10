@@ -20,16 +20,17 @@
     }
   </style>
 
-  <script src="data.js"></script>
+  <!-- React first so its globals are ready by the time deferred scripts run. -->
   <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+
+  <!-- data.js is an ES module aggregating per-category files. Module scripts
+       are deferred by default; terminal-app.js below uses defer too, so they
+       execute after parsing in document order — data first, app second. -->
+  <script type="module" src="data.js"></script>
+  <script src="terminal-app.js" defer></script>
 </head>
 <body>
   <div id="root"></div>
-
-  <script src="terminal-app.js"></script>
-  <script>
-    ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(TerminalApp));
-  </script>
 </body>
 </html>
