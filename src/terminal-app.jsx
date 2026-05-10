@@ -665,3 +665,10 @@ function Kbd({ T, children }) {
 }
 
 window.TerminalApp = TerminalApp;
+
+// Self-bootstrap. terminal-app.js is loaded with `defer`, so the DOM is ready
+// and data.js (also deferred, earlier in document order) has populated
+// window.AWESOME_DATA by this point.
+ReactDOM.createRoot(document.getElementById('root')).render(
+  React.createElement(TerminalApp)
+);
