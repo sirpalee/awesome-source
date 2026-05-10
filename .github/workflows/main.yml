@@ -1,4 +1,4 @@
-name: Zola on GitHub Pages
+name: Deploy site to GitHub Pages
 
 on:
   push:
@@ -7,15 +7,18 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Publish site
+  deploy:
+    name: Publish site/ to deploy branch
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: Checkout main
+      - name: Checkout
         uses: actions/checkout@v4
-      - name: Build and deploy
-        uses: shalzz/zola-deploy-action@v0.22.1
-        env:
-          OUT_DIR: deploy
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PAGES_BRANCH: deploy
+
+      - name: Deploy to deploy branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          publish_branch: deploy
