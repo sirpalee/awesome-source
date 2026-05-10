@@ -1,29 +1,30 @@
-// Hand-maintained data for awesome-source.wiki.
+// Aggregator for awesome-source.wiki.
 //
-// To add a resource, append an object under the right category in RESOURCES.
-// Required: title, url. Recommended: tags, source, year, blurb. Tag ids must
-// match an entry in TAGS (the chip set in the UI is built from there).
+// Each category lives in its own file under site/data/. This file imports
+// them, defines the generic resource-type tags, dedupes everything, and
+// publishes window.AWESOME_DATA for the SPA to consume.
 //
-// The first tag is conventionally a topic tag mirroring the original markdown
-// filename (e.g. "voxels", "llm", "best practices"); the second is the
-// resource type ("paper", "blog", ...). Adding a brand-new tag means adding
-// it to TAGS as well so it gets a description and shows up as a filter chip.
+// To add a category:
+//   1. Drop a new module under site/data/, default-exporting
+//      { id, name, blurb, tags, resources }.
+//   2. Import it below and add it to CATEGORY_MODULES (in display order).
+//   3. Add a corresponding <script type="module" ...> import? — no, this
+//      file is the only entry point. Just import here.
 
-const CATEGORIES = [
-  { id: "ai",          name: "AI",                    blurb: "Models, agents, training & inference notes" },
-  { id: "rendering",   name: "Rendering",             blurb: "Rasterization, real-time, voxels, perf" },
-  { id: "vulkan",      name: "Vulkan",                blurb: "Specs, samples, and best practices" },
-  { id: "rust",        name: "Rust",                  blurb: "Systems programming in Rust" },
-  { id: "performance", name: "Performance",           blurb: "CPU, memory, profiling, low-level perf" },
-  { id: "simulation",  name: "Simulation",            blurb: "Physics, fluids, cloth, particles" },
-  { id: "procgen",     name: "Procedural Generation", blurb: "Noise, L-systems, wave function collapse" },
-  { id: "dataset",     name: "Datasets",              blurb: "Open data sources and benchmarks" },
-  { id: "general",     name: "General",               blurb: "Foundational reads & cross-cutting tools" },
-  { id: "blogs",       name: "Blogs & News",          blurb: "People and publications worth subscribing to" },
-];
+import ai          from "./data/ai.js";
+import rendering   from "./data/rendering.js";
+import vulkan      from "./data/vulkan.js";
+import rust        from "./data/rust.js";
+import performance from "./data/performance.js";
+import simulation  from "./data/simulation.js";
+import procgen     from "./data/procgen.js";
+import dataset     from "./data/dataset.js";
+import general     from "./data/general.js";
+import blogs       from "./data/blogs.js";
 
-const TAGS = [
-  // Resource type
+// Generic resource-type tags shared by every category. Topic tags (the
+// markdown filename a resource came from) live with their category file.
+const GENERIC_TAGS = [
   { id: "paper",  name: "paper",  blurb: "Academic or technical paper, often as PDF" },
   { id: "video",  name: "video",  blurb: "Recorded video or screencast" },
   { id: "talk",   name: "talk",   blurb: "Conference or meetup talk" },
@@ -33,514 +34,33 @@ const TAGS = [
   { id: "book",   name: "book",   blurb: "Book (online or in print)" },
   { id: "doc",    name: "doc",    blurb: "Reference documentation" },
   { id: "course", name: "course", blurb: "Course, tutorial series or guided learning" },
-
-  // Topic — mirror original markdown filenames
-  { id: "actor",            name: "actor",            blurb: "Actor-model concurrency" },
-  { id: "agent",            name: "agent",            blurb: "Agent-based modeling and simulation" },
-  { id: "best practices",   name: "best practices",   blurb: "Best-practice guidance from vendors and practitioners" },
-  { id: "blogs",            name: "blogs",            blurb: "Curated blog rolls / individual blogs to follow" },
-  { id: "cpp",              name: "cpp",              blurb: "C++ language specifics, benchmarks and idioms" },
-  { id: "general",          name: "general",          blurb: "General-purpose / cross-cutting" },
-  { id: "gpu",              name: "gpu",              blurb: "GPU programming, profiling and performance" },
-  { id: "libraries",        name: "libraries",        blurb: "Libraries, crates and bindings" },
-  { id: "llm",              name: "llm",              blurb: "Large language models" },
-  { id: "machine learning", name: "machine learning", blurb: "Classical and deep machine learning" },
-  { id: "performance",      name: "performance",      blurb: "Performance, profiling and optimization (rendering-flavoured)" },
-  { id: "rasterization",    name: "rasterization",    blurb: "Triangle and pixel rasterization" },
-  { id: "realtime",         name: "realtime",         blurb: "Real-time rendering techniques" },
-  { id: "research",         name: "research",         blurb: "Research portals and aggregators" },
-  { id: "terrain",          name: "terrain",          blurb: "Terrain generation, simulation and data" },
-  { id: "tools",            name: "tools",            blurb: "Tool catalogs and utility apps" },
-  { id: "voxels",           name: "voxels",           blurb: "Voxels, sparse voxel octrees and DAGs" },
-  { id: "water",            name: "water",            blurb: "Water and fluid simulation" },
 ];
 
-const RESOURCES = {
-  ai: [
-    {
-      title: "Roleplaying driven by an LLM: observations & open questions",
-      url:    "https://ianbicking.org/blog/2024/04/roleplaying-by-llm",
-      source: "Ian Bicking",
-      year:   2024,
-      tags:   ["llm", "blog"],
-      blurb:  "Notes from experiments using LLMs to drive interactive roleplay.",
-    },
-    {
-      title: "Generative Agents: Interactive Simulacra of Human Behavior",
-      url:    "https://arxiv.org/pdf/2304.03442",
-      source: "Park et al.",
-      year:   2023,
-      tags:   ["llm", "paper"],
-      blurb:  "Architecture for believable agents simulating human behavior with LLMs.",
-    },
-    {
-      title: "Neural Networks and Deep Learning",
-      url:    "http://neuralnetworksanddeeplearning.com/index.html",
-      source: "Michael Nielsen",
-      year:   2015,
-      tags:   ["machine learning", "book"],
-      blurb:  "Free online book introducing neural networks and deep learning fundamentals.",
-    },
-    {
-      title: "NeuralVDB: High-resolution Sparse Volume Representation using Hierarchical Neural Networks",
-      url:    "https://arxiv.org/abs/2208.04448",
-      source: "Kim et al.",
-      year:   2022,
-      tags:   ["machine learning", "paper"],
-      blurb:  "Hierarchical neural representation for sparse volumetric data on top of OpenVDB.",
-    },
-  ],
+const CATEGORY_MODULES = [
+  ai, rendering, vulkan, rust, performance,
+  simulation, procgen, dataset, general, blogs,
+];
 
-  rendering: [
-    {
-      title: "Concurrent Binary Trees for Large-Scale Game Components",
-      url:    "https://ggx-research.github.io/publication/2024/07/27/publication-cbt.html",
-      source: "GGX Research",
-      year:   2024,
-      tags:   ["performance", "paper"],
-      blurb:  "Concurrent binary trees as a scalable spatial data structure for real-time games.",
-    },
-    {
-      title: "High-Performance Software Rasterization on GPUs",
-      url:    "https://research.nvidia.com/publication/high-performance-software-rasterization-gpus",
-      source: "Laine & Karras",
-      year:   2011,
-      tags:   ["rasterization", "paper"],
-      blurb:  "CUDA-based software rasterizer competitive with hardware for many workloads.",
-    },
-    {
-      title: "Beating The GPU At Its Own Game",
-      url:    "http://www.joshbarczak.com/blog/?p=1012",
-      source: "Josh Barczak",
-      year:   2017,
-      tags:   ["rasterization", "blog"],
-      blurb:  "Investigation of how a tightly-tuned software rasterizer compares to GPU hardware.",
-    },
-    {
-      title: "A SIMD-efficient 14-Instruction Shader Program for Microtriangle Rasterization",
-      url:    "http://attila.ac.upc.edu/wiki/images/9/95/CGI10_microtriangles_presentation.pdf",
-      source: "ATTILA / UPC",
-      year:   2010,
-      tags:   ["rasterization", "paper", "talk"],
-      blurb:  "SIMD-friendly shader program for high-throughput rasterization of tiny triangles.",
-    },
-    {
-      title: "Triangle Visibility Buffer",
-      url:    "http://diaryofagraphicsprogrammer.blogspot.com/2018/03/triangle-visibility-buffer.html",
-      source: "Wolfgang Engel",
-      year:   2018,
-      tags:   ["rasterization", "blog"],
-      blurb:  "Visibility buffer rendering architecture for high-resolution displays and games.",
-    },
-    {
-      title: "Advances in Real-Time Rendering in 3D Graphics and Games",
-      url:    "https://advances.realtimerendering.com/",
-      source: "SIGGRAPH course",
-      year:   2024,
-      tags:   ["realtime", "talk", "course"],
-      blurb:  "The long-running SIGGRAPH course archive on real-time rendering techniques.",
-    },
-    {
-      title: "Visibility buffer rendering with material graphs",
-      url:    "http://filmicworlds.com/blog/visibility-buffer-rendering-with-material-graphs/",
-      source: "Filmic Worlds",
-      year:   2018,
-      tags:   ["realtime", "blog"],
-      blurb:  "Combining visibility buffers with material graphs for flexible deferred shading.",
-    },
-    {
-      title: "The Visibility Buffer: A Cache-Friendly Approach to Deferred Shading",
-      url:    "http://jcgt.org/published/0002/02/04/",
-      source: "Burns & Hunt",
-      year:   2013,
-      tags:   ["realtime", "paper"],
-      blurb:  "Original paper introducing the visibility-buffer technique for deferred shading.",
-    },
-    {
-      title: "4K Rendering Breakthrough: The Filtered and Culled Visibility Buffer",
-      url:    "https://www.gdcvault.com/play/1023792/4K-Rendering-Breakthrough-The-Filtered",
-      source: "GDC Vault",
-      year:   2016,
-      tags:   ["realtime", "talk"],
-      blurb:  "GDC talk on filtered and culled visibility buffers for high-resolution rendering.",
-    },
-    {
-      title: "Gigavoxels",
-      url:    "http://gigavoxels.inrialpes.fr/",
-      source: "INRIA",
-      year:   2009,
-      tags:   ["voxels", "paper", "tool"],
-      blurb:  "Out-of-core sparse voxel octree rendering for huge volumetric datasets.",
-    },
-    {
-      title: "Animated Sparse Voxel Octrees",
-      url:    "https://bautembach.de/#asvo",
-      source: "Dennis Bautembach",
-      year:   2011,
-      tags:   ["voxels", "paper"],
-      blurb:  "Sparse voxel octree representation with support for animated content.",
-    },
-    {
-      title: "Current Generation Parallelism in Games (SVO)",
-      url:    "https://www.jonolick.com/uploads/7/9/2/1/7921194/olick-current-and-next-generation-parallelism-in-games.pdf",
-      source: "Jon Olick",
-      year:   2008,
-      tags:   ["voxels", "talk", "paper"],
-      blurb:  "Influential SIGGRAPH talk on sparse voxel octrees for next-gen game rendering.",
-    },
-    {
-      title: "Lossy Geometry Compression for High Resolution Voxel Scenes",
-      url:    "https://www.youtube.com/watch?v=Huo6E7knRgk",
-      source: "TU Delft",
-      year:   2020,
-      tags:   ["voxels", "video", "talk"],
-      blurb:  "Talk on lossy geometry compression for very large voxel scenes.",
-    },
-    {
-      title: "Lossy Geometry Compression for High Resolution Voxel Scenes (paper)",
-      url:    "https://graphics.tudelft.nl/Publications-new/2020/VSE20/LossyGeometryCompressionForHighResolutionVoxelScenes.pdf",
-      source: "van der Linden et al.",
-      year:   2020,
-      tags:   ["voxels", "paper"],
-      blurb:  "Paper accompanying the TU Delft talk on lossy voxel geometry compression.",
-    },
-    {
-      title: "Symmetry-aware Sparse Voxel DAGs (SSVDAGs)",
-      url:    "https://jcgt.org/published/0006/02/01/",
-      source: "Villanueva et al.",
-      year:   2017,
-      tags:   ["voxels", "paper"],
-      blurb:  "Compression-domain ray tracing of high-resolution scenes via symmetry-aware DAGs.",
-    },
-    {
-      title: "PSVDAG: Pointerless Sparse Voxel Directed Acyclic Graphs",
-      url:    "http://www.cai.sk/ojs/index.php/cai/article/view/2020_3_587",
-      source: "Computing & Informatics",
-      year:   2020,
-      tags:   ["voxels", "paper"],
-      blurb:  "Compact, pointerless DAG representation for voxelized 3D scenes.",
-    },
-    {
-      title: "High Resolution Sparse Voxel DAGs",
-      url:    "http://www.cse.chalmers.se/~uffe/HighResolutionSparseVoxelDAGs.pdf",
-      source: "Kämpe et al.",
-      year:   2013,
-      tags:   ["voxels", "paper"],
-      blurb:  "DAG compression of sparse voxel octrees for huge resolutions.",
-    },
-    {
-      title: "Interactively Modifying Compressed Sparse Voxel Representations",
-      url:    "https://graphics.tudelft.nl/Publications-new/2020/CBE20/ModifyingCompressedVoxels-main.pdf",
-      source: "TU Delft",
-      year:   2020,
-      tags:   ["voxels", "paper"],
-      blurb:  "Edit operations on top of compressed sparse voxel structures at interactive rates.",
-    },
-    {
-      title: "An Accurate Method for Voxelizing Polygon Meshes",
-      url:    "http://web.eecs.utk.edu/~huangj/papers/polygon.pdf",
-      source: "Huang et al.",
-      year:   1998,
-      tags:   ["voxels", "paper"],
-      blurb:  "Classical algorithm for accurately voxelizing arbitrary polygonal meshes.",
-    },
-    {
-      title: "Robust Inside-Outside Segmentation using Generalized Winding Numbers",
-      url:    "https://igl.ethz.ch/projects/winding-number/robust-inside-outside-segmentation-using-generalized-winding-numbers-siggraph-2013-jacobson-et-al.pdf",
-      source: "Jacobson et al.",
-      year:   2013,
-      tags:   ["voxels", "paper"],
-      blurb:  "Generalized winding numbers for robustly testing inside/outside on imperfect meshes.",
-    },
-    {
-      title: "An Efficient Parametric Algorithm for Octree Traversal",
-      url:    "http://wscg.zcu.cz/wscg2000/Papers_2000/X31.pdf",
-      source: "Revelles et al.",
-      year:   2000,
-      tags:   ["voxels", "paper"],
-      blurb:  "Efficient parametric ray traversal of octrees, foundational for many voxel renderers.",
-    },
-  ],
+const CATEGORIES = CATEGORY_MODULES.map(({ id, name, blurb }) => ({ id, name, blurb }));
 
-  vulkan: [
-    {
-      title: "Vulkan Do's and Don'ts",
-      url:    "https://developer.nvidia.com/blog/vulkan-dos-donts/",
-      source: "NVIDIA",
-      year:   2019,
-      tags:   ["best practices", "blog", "doc"],
-      blurb:  "Pragmatic guidance from NVIDIA on writing performant, correct Vulkan code.",
-    },
-    {
-      title: "GPUOpen Performance",
-      url:    "https://gpuopen.com/performance/",
-      source: "AMD GPUOpen",
-      year:   2024,
-      tags:   ["best practices", "doc"],
-      blurb:  "AMD's collection of GPU performance guidance for graphics developers.",
-    },
-    {
-      title: "How I learned Vulkan and wrote a small game engine with it",
-      url:    "https://edw.is/learning-vulkan/",
-      source: "edw.is",
-      year:   2021,
-      tags:   ["blogs", "blog"],
-      blurb:  "Learning narrative covering the path from Vulkan basics to a small custom engine.",
-    },
-    {
-      title: "Vulkan Hardware Database",
-      url:    "http://vulkan.gpuinfo.org",
-      source: "Sascha Willems",
-      year:   2024,
-      tags:   ["tools", "tool"],
-      blurb:  "Searchable database of Vulkan capability reports across consumer hardware.",
-    },
-    {
-      title: "AMD Radeon Developer Tools",
-      url:    "https://gpuopen.com/tools/",
-      source: "AMD GPUOpen",
-      year:   2024,
-      tags:   ["tools", "tool"],
-      blurb:  "AMD's profilers, debuggers and analysis tools for graphics developers.",
-    },
-    {
-      title: "NVIDIA Nsight",
-      url:    "https://developer.nvidia.com/tools-overview",
-      source: "NVIDIA",
-      year:   2024,
-      tags:   ["tools", "tool"],
-      blurb:  "NVIDIA's family of GPU debugging and profiling tools across APIs.",
-    },
-  ],
+// Concatenate generic + per-category topic tags, dedupe by id (some topic
+// tags like "tools" or "terrain" are reused across multiple categories).
+const TAGS = (() => {
+  const seen = new Set();
+  const out = [];
+  for (const t of [...GENERIC_TAGS, ...CATEGORY_MODULES.flatMap(c => c.tags || [])]) {
+    if (seen.has(t.id)) continue;
+    seen.add(t.id);
+    out.push(t);
+  }
+  return out;
+})();
 
-  rust: [
-    {
-      title: "Ash",
-      url:    "https://crates.io/crates/ash",
-      source: "ash-rs",
-      year:   2024,
-      tags:   ["libraries", "repo", "tool"],
-      blurb:  "Lean and unsafe Vulkan bindings for Rust.",
-    },
-    {
-      title: "Winit",
-      url:    "https://crates.io/crates/winit",
-      source: "rust-windowing",
-      year:   2024,
-      tags:   ["libraries", "repo", "tool"],
-      blurb:  "Lightweight and multi-platform windowing library for Rust.",
-    },
-  ],
-
-  performance: [
-    {
-      title: "Hashmap benchmarks",
-      url:    "https://martin.ankerl.com/2019/04/01/hashmap-benchmarks-01-overview/",
-      source: "Martin Ankerl",
-      year:   2019,
-      tags:   ["cpp", "blog"],
-      blurb:  "Methodology and overview for an extensive series of C++ hashmap benchmarks.",
-    },
-    {
-      title: "Comprehensive C++ Hashmap Benchmarks 2022",
-      url:    "https://martin.ankerl.com/2022/08/27/hashmap-bench-01/",
-      source: "Martin Ankerl",
-      year:   2022,
-      tags:   ["cpp", "blog"],
-      blurb:  "Refreshed cross-implementation benchmarks of modern C++ hashmaps.",
-    },
-    {
-      title: "std::vector VS std::list VS std::deque",
-      url:    "https://baptiste-wicht.com/posts/2012/12/cpp-benchmark-vector-list-deque.html",
-      source: "Baptiste Wicht",
-      year:   2012,
-      tags:   ["cpp", "blog"],
-      blurb:  "Empirical comparison of the three standard sequence containers under common workloads.",
-    },
-    {
-      title: "Multi-GPU programming",
-      url:    "https://medium.com/gpgpu/multi-gpu-programming-6768eeb42e2c",
-      source: "Medium / gpgpu",
-      year:   2018,
-      tags:   ["gpu", "blog"],
-      blurb:  "Overview of strategies for splitting compute work across multiple GPUs.",
-    },
-  ],
-
-  simulation: [
-    {
-      title: "A Review of Digital Terrain Modeling",
-      url:    "https://hal.archives-ouvertes.fr/hal-02097510/document",
-      source: "Galin et al.",
-      year:   2019,
-      tags:   ["terrain", "paper"],
-      blurb:  "Survey of digital terrain modeling techniques in computer graphics.",
-    },
-    {
-      title: "Models of dune field morphology",
-      url:    "https://smallpond.ca/jim/sand/dunefieldMorphology/index.html",
-      source: "smallpond.ca",
-      year:   2018,
-      tags:   ["terrain", "blog", "tool"],
-      blurb:  "Hands-on exploration of computational models for dune-field morphology.",
-    },
-    {
-      title: "Desertscape Simulation",
-      url:    "https://hal.archives-ouvertes.fr/hal-02273039/document",
-      source: "Paris et al.",
-      year:   2019,
-      tags:   ["terrain", "paper"],
-      blurb:  "Physically based simulation of large-scale desert landscapes.",
-    },
-    {
-      title: "Saltation transport on Mars",
-      url:    "https://arxiv.org/pdf/0705.1776.pdf",
-      source: "arXiv",
-      year:   2007,
-      tags:   ["terrain", "paper"],
-      blurb:  "Physical study of saltation-driven sand transport in Martian conditions.",
-    },
-    {
-      title: "Large-Scale Water Simulation in Games",
-      url:    "https://trepo.tuni.fi/handle/10024/115052",
-      source: "Tampere University",
-      year:   2020,
-      tags:   ["water", "paper"],
-      blurb:  "Thesis on large-scale water simulation techniques tailored for game environments.",
-    },
-  ],
-
-  procgen: [
-    {
-      title: "Algorithmic Botany — Przemyslaw Prusinkiewicz",
-      url:    "http://algorithmicbotany.org/papers/#papers",
-      source: "Algorithmic Botany",
-      year:   2024,
-      tags:   ["paper", "tool"],
-      blurb:  "Decades of L-systems and plant-generation papers from the Prusinkiewicz group.",
-    },
-    {
-      title: "The Wavefunction Collapse Algorithm explained very clearly",
-      url:    "https://robertheaton.com/2018/12/17/wavefunction-collapse-algorithm/",
-      source: "Robert Heaton",
-      year:   2018,
-      tags:   ["blog"],
-      blurb:  "Step-by-step walkthrough of the WFC algorithm with worked examples.",
-    },
-    {
-      title: "Procedural Generation with Wave Function Collapse",
-      url:    "https://www.gridbugs.org/wave-function-collapse/",
-      source: "gridbugs",
-      year:   2020,
-      tags:   ["blog"],
-      blurb:  "Implementation-focused write-up of WFC for tilemap generation.",
-    },
-    {
-      title: "Generating Worlds With Wave Function Collapse",
-      url:    "https://www.procjam.com/tutorials/wfc/",
-      source: "ProcJam",
-      year:   2018,
-      tags:   ["course", "blog"],
-      blurb:  "Beginner-friendly tutorial on using WFC for procedural world generation.",
-    },
-    {
-      title: "WaveFunctionCollapse",
-      url:    "https://github.com/mxgmn/WaveFunctionCollapse",
-      source: "mxgmn",
-      year:   2016,
-      tags:   ["repo", "tool"],
-      blurb:  "Reference implementation of WFC for textures and tilemaps.",
-    },
-  ],
-
-  dataset: [
-    {
-      title: "McGuire Computer Graphics Archive",
-      url:    "http://casual-effects.com/data/index.html",
-      source: "Morgan McGuire",
-      year:   2017,
-      tags:   ["general", "tool"],
-      blurb:  "Curated 3D scenes and meshes used as a reference benchmark by graphics researchers.",
-    },
-    {
-      title: "NASA Scientific Visualization Studio — CGI Moon Kit",
-      url:    "https://svs.gsfc.nasa.gov/cgi-bin/details.cgi?aid=4720",
-      source: "NASA SVS",
-      year:   2020,
-      tags:   ["terrain", "tool"],
-      blurb:  "High-resolution displacement and color maps of the Moon, free for any use.",
-    },
-  ],
-
-  general: [
-    {
-      title: "Actors with Tokio",
-      url:    "https://ryhl.io/blog/actors-with-tokio/",
-      source: "Alice Ryhl",
-      year:   2021,
-      tags:   ["actor", "blog"],
-      blurb:  "Idiomatic patterns for building actor-style concurrency on top of Tokio.",
-    },
-    {
-      title: "ABMU: An Agent-Based Modelling Framework for Unity3D",
-      url:    "https://www.sciencedirect.com/science/article/pii/S2352711021000881",
-      source: "Hassan et al.",
-      year:   2021,
-      tags:   ["agent", "paper"],
-      blurb:  "Reusable framework for agent-based modelling layered on top of Unity3D.",
-    },
-    {
-      title: "An Agent-Based Model for Game Development",
-      url:    "https://www.researchgate.net/publication/322158842_An_Agent-Based_Model_for_Game_Development",
-      source: "Pereira et al.",
-      year:   2017,
-      tags:   ["agent", "paper"],
-      blurb:  "Applies agent-based modelling techniques to gameplay and AI behaviours.",
-    },
-    {
-      title: "NVIDIA research publications",
-      url:    "https://research.nvidia.com/publications",
-      source: "NVIDIA",
-      year:   2024,
-      tags:   ["research", "tool", "doc"],
-      blurb:  "Searchable index of NVIDIA Research papers across graphics, AI and systems.",
-    },
-    {
-      title: "Game Development Articles, Publications, …",
-      url:    "https://www.gamedevs.org",
-      source: "gamedevs.org",
-      year:   2024,
-      tags:   ["research", "tool"],
-      blurb:  "Long-running archive of articles and conference talks on game development.",
-    },
-    {
-      title: "Easing Functions Cheat Sheet",
-      url:    "https://easings.net/",
-      source: "easings.net",
-      year:   2024,
-      tags:   ["tools", "tool"],
-      blurb:  "Visual reference for common easing functions with copy-pasteable code.",
-    },
-  ],
-
-  blogs: [
-    {
-      title: "Graphics Programming Weekly",
-      url:    "https://www.jendrikillner.com/article_database/",
-      source: "Jendrik Illner",
-      year:   2024,
-      tags:   ["blog"],
-      blurb:  "Weekly digest of new graphics programming articles, talks and papers.",
-    },
-    {
-      title: "Ponies & Light",
-      url:    "https://poniesandlight.co.uk/reflect/",
-      source: "Tim Gfrerer",
-      year:   2024,
-      tags:   ["blog"],
-      blurb:  "Long-form posts on real-time graphics, Vulkan, and rendering architecture.",
-    },
-  ],
-};
+// Resources keyed by category id. The terminal-app flattens this and injects
+// `cat` per resource at load time, so individual resource entries never
+// mention their category.
+const RESOURCES = Object.fromEntries(
+  CATEGORY_MODULES.map(c => [c.id, c.resources || []])
+);
 
 window.AWESOME_DATA = { categories: CATEGORIES, tags: TAGS, resources: RESOURCES };
