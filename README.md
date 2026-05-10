@@ -8,12 +8,20 @@ move, `Enter` to open, `?` for help).
 
 ```
 site/
-├── index.html        Static shell that loads React + Babel from CDN
-├── data.js           Hand-maintained resources & categories
-└── terminal-app.js   The React SPA (compiled in-browser by Babel standalone)
+├── index.html         Static shell that loads React from CDN
+├── data.js            Hand-maintained resources & categories
+└── terminal-app.js    Compiled JS for the React SPA (auto-generated)
+
+src/
+└── terminal-app.jsx   JSX source — edit here, then recompile
 ```
 
-The whole site is the `site/` directory — three files, no build step.
+The deployable site is the `site/` directory. To rebuild the SPA after editing
+the JSX source:
+
+```sh
+npx babel src/terminal-app.jsx -o site/terminal-app.js --presets=@babel/preset-react
+```
 
 ## Adding a resource
 
